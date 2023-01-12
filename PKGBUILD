@@ -5,6 +5,10 @@ pkgver=2.5.2
 pkgrel=3
 
 _modname="${pkgname#nginx-quic-mod-}"
+if [[ $CC=="clang" ]];then
+    _cc_opt="-flto"
+    _ld_opt="-flto -fuse-ld=lld"
+fi
 
 pkgdesc='Nginx module with ability to purge content from FastCGI, proxy, SCGI and uWSGI caches'
 arch=('x86_64')
@@ -32,7 +36,7 @@ prepare() {
 
 build() {
 	cd build
-	/usr/src/nginx/configure --with-compat --add-dynamic-module=../ngx_cache_purge-$pkgver
+	/usr/src/nginx/configure --with-compat --add-dynamic-module=../ngx_cache_purge-$pkgver --with-cc-opt="$_cc_opt" --with-ld-opt="$_ld_opt"
 	make modules
 }
 
